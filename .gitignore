@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+# test
+tests/
+compare.py
+runall.sh
+testall.sh
+visualize.html
+# playground
+tmp.*
