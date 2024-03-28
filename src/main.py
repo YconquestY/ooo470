@@ -22,9 +22,6 @@ if __name__ == '__main__':
         print('cycle', format(cycle, '02d'), end=' ')
         stop = ooo470.next()
         log.append(ooo470.dump())
-
-        if cycle == 100:
-            break
     
     with open(outPath, 'w') as fout:
         json.dump(log, fout, indent=4)

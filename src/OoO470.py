@@ -46,7 +46,7 @@ class OoO470:
         ''' pipeline advances
             total order: EX2 < C < EX1 < I < R&D < F&D
         '''        
-        if not self.exception:
+        if not self.eflag:
             # EX2
             print('EX2', end=' ')
             try:
@@ -65,8 +65,21 @@ class OoO470:
                 if num_commit >= 4:
                     break
 
-                if self.activeList[pc].exception:               # The exception will never be raised
-                    raise ZeroDivisionError('division by zero') #     because control branches to its handler.
+                if self.activeList[pc].exception:
+                    print('RESET')
+
+                    self.eflag = True
+                    self.pc = self.exceptionPC
+                    self.epc = pc
+
+                    self.dir.clear()
+                    self.iq.clear()
+                    self.alu.clear()
+                    # commit non-faulting instructions
+                    for pc in pcOfInstrToCommit:
+                        del self.activeList[pc]
+                    
+                    return self.halt
                 elif self.activeList[pc].done:
                     pcOfInstrToCommit.append(pc)
                     self.freeList.append(self.activeList[pc].oldDest) # update free list
@@ -88,8 +101,6 @@ class OoO470:
                         if entry.pc in self.activeList:
                             self.activeList[entry.pc].done = True
                             self.activeList[entry.pc].exception = entry.exception
-                            if entry.exception:
-                                self.exception = True
                         else:
                             raise KeyError('instruction not in active list')
             # EX1
@@ -225,23 +236,10 @@ class OoO470:
                 # roll back active list
                 for lastPC in pcOfInstrToRollback:
                     del self.activeList[lastPC]
-            # Attention: update `eflag` after updating `pc` and `epc` and after
-            #            clearing `dir`
-            # This is because `pc` and `epc` are updated only once and that
-            # `dir` is cleared only once.
-            # During the cycle when an exception occurs, none of `pc`, `epc`,
-            # and `eflag` shall be logged as in exception mode.
-            if (not self.eflag) and (not self.halt):
-                print('RESET')
-                self.pc = self.exceptionPC
-                self.epc = self.activeList.firstKey()
-                self.dir.clear() # clear DIR in the first cycle of exception mode
-                self.iq.clear()  # clear IQ  in the first cycle of exception mode
-                self.alu.clear() # clear ALU in the first cycle of exception mode
-            self.eflag = True
             
             if len(self.activeList) == 0:
                 if self.halt: # exception recovered last cycle
+                    print()
                     self.eflag = False
                     return True
                 else: # exception just recovered this cycle

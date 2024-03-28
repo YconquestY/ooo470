@@ -42,16 +42,19 @@ class IntQ:
         self.buffer.append(entry)
     
     def dump(self) -> list[dict]:
+        def unsign(x: int) -> int:
+            return x % (1 << 64) if x < 0 else x # Why does it work?
+        
         def entry2dict(entry: IntQEntry) -> dict:
             return {'DestRegister': entry.dest,
                     
                     'OpAIsReady': entry.aReady,
                     'OpARegTag': entry.aRegTag,
-                    'OpAValue': entry.aValue,
+                    'OpAValue': unsign(entry.aValue),
 
                     'OpBIsReady': entry.bReady,
                     'OpBRegTag': entry.bRegTag,
-                    'OpBValue': entry.bValue,
+                    'OpBValue': unsign(entry.bValue),
                     
                     'OpCode': ('add' if entry.op == 'addi' else entry.op),
                     'PC': entry.pc}
