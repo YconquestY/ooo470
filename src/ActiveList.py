@@ -35,11 +35,17 @@ class ActiveList:
     def pop(self, key: int) -> ActiveListEntry:
         return self.active.pop(key)
     
+    def __contains__(self, key: int) -> bool:
+        return key in self.active
+    
+    def keys(self) -> list[int]:
+        return list(self.active.keys())
+    
     def firstKey(self) -> int:
         return next(iter(self.active))
     
-    def lastKey(self) -> int:
-        return next(reversed(self.active)) # `reversed` does not modify `self.active`
+    def lastKeys(self, size) -> tuple[int]:
+        return tuple(self.active.keys())[-1:-size-1:-1] # reverse program order
     
     def dump(self) -> list[dict]:
         def entry2dict(key: int) -> dict:

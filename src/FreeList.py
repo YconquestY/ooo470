@@ -14,7 +14,7 @@ class FreeList:
         return len(self.free)
     
     def available(self, size = 4) -> bool:
-        return self.capacity - len(self) >= size
+        return len(self) >= size
     
     def popleft(self) -> int:
         return self.free.popleft()

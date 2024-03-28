@@ -19,6 +19,9 @@ class ALU:
     
     def ex1(self, job: tuple[IntQEntry]) -> None:
         def compute(entry: IntQEntry) -> ALUEntry:
+            if entry is None:
+                return None
+            
             result: int = 0
             exception: bool = False
             if entry.op == 'add' or entry.op == 'addi':
@@ -45,3 +48,6 @@ class ALU:
 
     def ex2(self) -> tuple[ALUEntry]:
         return self.ex12ex2.popleft()
+    
+    def clear(self) -> None:
+        self.ex12ex2.clear()

@@ -35,6 +35,9 @@ class IntQ:
     def __delitem__(self, idx: int) -> None:
         del self.buffer[idx]
     
+    def clear(self) -> None:
+        self.buffer.clear()
+    
     def append(self, entry: IntQEntry) -> None:
         self.buffer.append(entry)
     
@@ -50,6 +53,6 @@ class IntQ:
                     'OpBRegTag': entry.bRegTag,
                     'OpBValue': entry.bValue,
                     
-                    'OpCode': entry.op,
+                    'OpCode': ('add' if entry.op == 'addi' else entry.op),
                     'PC': entry.pc}
         return list(map(entry2dict, self.buffer))
