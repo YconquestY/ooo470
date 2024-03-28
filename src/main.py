@@ -17,7 +17,6 @@ if __name__ == '__main__':
     log.append(ooo470.dump())
 
     stop = False
-    
     while not stop:
         cycle += 1
         print('cycle', format(cycle, '02d'), end=' ')

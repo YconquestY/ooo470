@@ -65,8 +65,8 @@ class OoO470:
                 if num_commit >= 4:
                     break
 
-                if self.activeList[pc].exception:
-                    raise ZeroDivisionError('division by zero') # should never happen
+                if self.activeList[pc].exception:               # The exception will never be raised
+                    raise ZeroDivisionError('division by zero') #     because control branches to its handler.
                 elif self.activeList[pc].done:
                     pcOfInstrToCommit.append(pc)
                     self.freeList.append(self.activeList[pc].oldDest) # update free list
@@ -155,8 +155,8 @@ class OoO470:
                     # update active list
                     # Attention: update active list before register map
                     # This is because `oldDest` field of active list entry is the
-                    # corresponding register map entry. If register map was updated
-                    # first, such information would be lost.
+                    # corresponding register map entry. If register map were
+                    # updated first, such information would be lost.
                     #
                     # Attention: instructions are appended to active list in
                     #            program order.
@@ -164,8 +164,15 @@ class OoO470:
                                                                        exception=False,
                                                                        logicalDest=decodedInstr.dest,
                                                                        oldDest=self.regMap[decodedInstr.dest])
-                    
                     # dispatch
+                    # Attention: update integer queue before register map
+                    # This is because `aRegTag` and `bRegTag` fields of integer
+                    # queue entry are the corresponding register map entries.
+                    # If register map were updated first, operands not yet
+                    # available would refer to new physical registers. This is
+                    # problematic for accumulation, e.g.,
+                    #     add x4, x4, 1
+                    #
                     # For a register operand, there are 2 possibilities:
                     # 1. already in RF, either available long ago or forwarded just now
                     # 2. not yet available
