@@ -206,8 +206,8 @@ class OoO470:
                     for i in range(self.pc, min(self.pc + self.fetch_width,
                                                 len(self.iCache))): # near program end: only case where < 4 instructions fetched
                         self.dir.append(self.predecode(i))
-            self.pc = min(self.pc + self.fetch_width, # update PC
-                          len(self.iCache))
+                self.pc = min(self.pc + self.fetch_width, # update PC
+                              len(self.iCache))
         # exception mode
         else:
             if self.eflag and (not self.halt):
